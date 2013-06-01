@@ -174,8 +174,45 @@ exports.Decorator = {
 
 /*!
  * Strategy
- * -
+ * - For swapping an algorithm at runtime
  */
+
+exports.Strategy = {
+
+    spawnGeneral: function() {
+
+        function General() {
+        }
+        General.prototype.setStrategy = function(strategy) {
+            if (typeof strategy !== 'object') {
+                throw new Error('Strategy not defined');
+            }
+            this.strategy = strategy;
+        };
+        General.prototype.wageWar = function() {
+            if (!this.strategy) {
+                throw new Error('No strategy set');
+            }
+            return this.strategy.enact();
+        };
+
+        return new General();
+    },
+
+    Pincer: function Pincer() {
+        this.enact = function() {
+            return 'devastating pincer attack!';
+        };
+    },
+
+    Diplomacy: function Diplomacy() {
+        this.enact = function() {
+            return 'amicable friendship';
+        };
+    }
+
+
+};
 
 /*!
  * Facade

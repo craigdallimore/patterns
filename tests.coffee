@@ -7,9 +7,9 @@ patterns = require './patterns.js'
 
 describe 'Patterns', ->
 
+    ###
     describe 'singleton', ->
 
-    ###
         Singleton = patterns.Singleton
         instance1 = {}
         instance2 = {}
@@ -158,8 +158,39 @@ describe 'Patterns', ->
             cake.decorate 'frosting'
             cake.getSugar().should.equal '400g'
 
-### TODO
     describe 'Strategy', ->
+
+        ender = null
+        battlePlan = null
+        strategy = patterns.Strategy
+        beforeEach ->
+            ender = strategy.spawnGeneral()
+
+        it 'permits an algorithm to be chosen at runtime', ->
+            ender.should.be.an.object
+            ender.should.have.property 'setStrategy'
+            ender.setStrategy.should.be.a 'function'
+            ender.should.have.property 'wageWar'
+            ender.wageWar.should.be.a 'function'
+
+            battlePlan = new strategy.Pincer()
+            ender.setStrategy battlePlan
+            expect(ender.wageWar()).to.equal 'devastating pincer attack!'
+
+            peacePlan = new strategy.Diplomacy()
+            ender.setStrategy peacePlan
+            expect(ender.wageWar()).to.equal 'amicable friendship'
+
+        it 'requires a strategy to be set', ->
+            unplannedMove = ->
+                ender.wageWar()
+            expect(unplannedMove).to.throw /No strategy set/
+
+        it 'requires a valid strategy', ->
+            unlikelyRuse = ->
+                ender.setStrategy 'surrender'
+            expect(unlikelyRuse).to.throw Error
+### TODO
     describe 'Facade', ->
     describe 'Proxy', ->
     describe 'Mediator', ->
