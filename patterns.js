@@ -218,6 +218,50 @@ exports.Strategy = {
  * Facade
  * -
  */
+var facade = (function() {
+
+    function Wizard(name) {
+        this.name = name;
+    }
+    Wizard.prototype.cast = function cast(spell) {
+        return this.name + ' cast ' + spell;
+    };
+
+    function Enchanter(name) {
+        this.name = name;
+    }
+    Enchanter.prototype.cast = function enchant(spell) {
+        return this.name + ' enchanted ' + spell;
+    };
+    function MageFacade(mage) {
+        this.mage = mage;
+    }
+    MageFacade.prototype.invoke = function invoke(spell) {
+        var mage = this.mage;
+
+        if (typeof mage.cast !== 'undefined') {
+            return mage.cast(spell);
+        }
+        if (typeof mage.enchant !== 'undefined') {
+            return mage.enchant(spell);
+        }
+
+    };
+
+    return {
+        Wizard: Wizard,
+        Enchanter: Enchanter,
+        MageFacade: MageFacade
+    };
+
+}());
+
+
+exports.Facade = facade;
+
+
+
+
 
 /*!
  * Proxy

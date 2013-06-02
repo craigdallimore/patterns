@@ -190,8 +190,32 @@ describe 'Patterns', ->
             unlikelyRuse = ->
                 ender.setStrategy 'surrender'
             expect(unlikelyRuse).to.throw Error
-### TODO
+
     describe 'Facade', ->
+
+        facade = patterns.Facade
+        wizard = null
+        enchanter = null
+        mage1 = null
+        mage2 = null
+        MageFacade = facade.MageFacade
+
+        beforeEach ->
+            wizard = new facade.Wizard 'Mithrandir'
+            enchanter = new facade.Enchanter 'Tim'
+
+        it 'provides a common interface to multiple objects', ->
+            wizard.should.be.an 'object'
+            enchanter.should.be.an 'object'
+            mage1 = new MageFacade wizard
+            mage2 = new MageFacade enchanter
+            expect(mage1.invoke('healing')).to.equal 'Mithrandir cast healing'
+            expect(mage2.invoke('fireball')).to.equal 'Tim enchanted fireball'
+
+
+
+### TODO
+    describe 'Composite', ->
     describe 'Proxy', ->
     describe 'Mediator', ->
     describe 'Observer', ->
