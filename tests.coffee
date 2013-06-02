@@ -1,7 +1,10 @@
-chai = require './chai.js'
+chai = require 'chai'
+sinonChai = require 'sinon-chai'
+
 assert = chai.assert
 expect = chai.expect
 should = chai.should()
+chai.use sinonChai
 
 patterns = require './patterns.js'
 
@@ -212,11 +215,38 @@ describe 'Patterns', ->
             expect(mage1.invoke('healing')).to.equal 'Mithrandir cast healing'
             expect(mage2.invoke('fireball')).to.equal 'Tim enchanted fireball'
 
+    describe 'Proxy', ->
+
+        proxy = patterns.Proxy
+        ###
+        # Ok so
+        # ask if a thing is ready, get a yes
+        # ask for the thing - perform expensive op and return answer
+        # ask for the thing - return cached answer
+        ###
+
+        stockKeeper = new proxy.StockKeeper()
+        bookKeeper = new proxy.BookKeeper(stockKeeper)
+        # spy = sinon.spy(bookKeeper, 'countStock')
+
+        it 'enables one object to trigger an operation on another subject', (done) ->
+
+            bookKeeper.getInventory (stock) ->
+                expect(stock).to.equal '300 units'
+                done()
+
+        it 'masks or caches results from expensive operations', (done) ->
+
+            bookKeeper.getInventory (stock) ->
+                expect(stock).to.equal '300 units'
+                # spy.should.have.been.calledOnce
+                done()
+
 
 
 ### TODO
     describe 'Composite', ->
-    describe 'Proxy', ->
+    describe 'Adapter', ->
     describe 'Mediator', ->
     describe 'Observer', ->
 ###

@@ -216,7 +216,7 @@ exports.Strategy = {
 
 /*!
  * Facade
- * -
+ * - Provides a common interface for two similar but non-identical methods
  */
 var facade = (function() {
 
@@ -260,11 +260,49 @@ var facade = (function() {
 exports.Facade = facade;
 
 
-
-
-
 /*!
  * Proxy
+ * - One object acts as an interface to another object, perhaps to mask expensive operations
+ */
+
+var proxy = (function() {
+
+    function StockKeeper() {}
+    StockKeeper.prototype.countStock = function(callback) {
+        setTimeout(function() {
+            callback('300 units');
+        }, 150);
+    };
+
+    function BookKeeper(stockKeeper) {
+        this.stockKeeper = stockKeeper;
+        this.stock = null;
+    }
+    BookKeeper.prototype.getInventory = function(callback) {
+        if (this.stock) {
+            callback(this.stock);
+        }
+        this.stockKeeper.countStock(callback);
+    };
+
+    return {
+        StockKeeper: StockKeeper,
+        BookKeeper: BookKeeper
+    };
+
+
+}());
+
+
+exports.Proxy = proxy;
+
+/*!
+ * Adapter
+ * -
+ */
+
+/*!
+ * Composite
  * -
  */
 
