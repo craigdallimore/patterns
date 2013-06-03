@@ -1,4 +1,5 @@
 chai = require 'chai'
+sinon = require 'sinon'
 sinonChai = require 'sinon-chai'
 
 assert = chai.assert
@@ -218,16 +219,10 @@ describe 'Patterns', ->
     describe 'Proxy', ->
 
         proxy = patterns.Proxy
-        ###
-        # Ok so
-        # ask if a thing is ready, get a yes
-        # ask for the thing - perform expensive op and return answer
-        # ask for the thing - return cached answer
-        ###
 
         stockKeeper = new proxy.StockKeeper()
-        bookKeeper = new proxy.BookKeeper(stockKeeper)
-        # spy = sinon.spy(bookKeeper, 'countStock')
+        bookKeeper = new proxy.BookKeeper stockKeeper
+        spy = sinon.spy stockKeeper, 'countStock'
 
         it 'enables one object to trigger an operation on another subject', (done) ->
 
@@ -239,7 +234,7 @@ describe 'Patterns', ->
 
             bookKeeper.getInventory (stock) ->
                 expect(stock).to.equal '300 units'
-                # spy.should.have.been.calledOnce
+                spy.should.have.been.calledOnce
                 done()
 
 

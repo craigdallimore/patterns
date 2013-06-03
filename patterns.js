@@ -263,6 +263,9 @@ exports.Facade = facade;
 /*!
  * Proxy
  * - One object acts as an interface to another object, perhaps to mask expensive operations
+ * - In this example, there is a book keeper and stock keeper. The book keeper only requests
+ *   the expensive stock counting operation from the stock keeper when it doesn't know how
+ *   much stock there is.
  */
 
 var proxy = (function() {
@@ -279,10 +282,16 @@ var proxy = (function() {
         this.stock = null;
     }
     BookKeeper.prototype.getInventory = function(callback) {
+
+        var bookKeeper = this;
+
         if (this.stock) {
-            callback(this.stock);
+            return callback(this.stock);
         }
-        this.stockKeeper.countStock(callback);
+        this.stockKeeper.countStock(function(stock) {
+            callback(stock);
+            bookKeeper.stock = stock;
+        });
     };
 
     return {
