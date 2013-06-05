@@ -307,11 +307,70 @@ exports.Proxy = proxy;
 
 /*!
  * Adapter
+ * - for translating one interface to another
+ */
+var adapter = (function() {
+
+    function LegacyDVR() {}
+    LegacyDVR.prototype.play = function play() {
+        return 'playing';
+    };
+    LegacyDVR.prototype.pause = function pause() {
+        return 'paused';
+    };
+
+
+    function ModernDVR() {}
+    ModernDVR.prototype.start = function start() {
+        return 'started playback';
+    };
+    ModernDVR.prototype.halt = function halt() {
+        return 'stopped playback';
+    };
+
+    function DVRController( DVR ) {
+        this.DVR = DVR;
+    }
+    DVRController.prototype.startPlayback = function() {
+        if(!this.DVR.start) throw new Error('incompatible');
+        return this.DVR.start();
+    };
+    DVRController.prototype.stopPlayback = function() {
+        if(!this.DVR.halt) throw new Error('incompatible');
+        return this.DVR.halt();
+    };
+
+    function LegacyAdapter( DVR ) {
+        this.DVR = DVR;
+    }
+    LegacyAdapter.prototype.start = function start() {
+        this.DVR.play();
+        return 'started playback';
+    };
+    LegacyAdapter.prototype.halt = function start() {
+        this.DVR.pause();
+        return 'stopped playback';
+    };
+
+    return {
+        LegacyDVR: LegacyDVR,
+        ModernDVR: ModernDVR,
+        DVRController: DVRController,
+        LegacyAdapter: LegacyAdapter
+    };
+
+}());
+
+
+exports.Adapter = adapter;
+
+/*!
+ * Composite
  * -
  */
 
 /*!
- * Composite
+ * Command
  * -
  */
 

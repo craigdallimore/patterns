@@ -222,6 +222,7 @@ describe 'Patterns', ->
 
         stockKeeper = new proxy.StockKeeper()
         bookKeeper = new proxy.BookKeeper stockKeeper
+
         spy = sinon.spy stockKeeper, 'countStock'
 
         it 'enables one object to trigger an operation on another subject', (done) ->
@@ -237,11 +238,39 @@ describe 'Patterns', ->
                 spy.should.have.been.calledOnce
                 done()
 
+    describe 'Adapter', ->
+
+        adapter = patterns.Adapter
+        legacyDVR = new adapter.LegacyDVR()
+        modernDVR = new adapter.ModernDVR()
+        LegacyAdapter = adapter.LegacyAdapter
+        DVRController = adapter.DVRController
+        dvrcon = null
+        legacyAdapter = null
+
+
+        it 'is not required with compatible interfaces', ->
+            dvrcon = new DVRController modernDVR
+            dvrcon.startPlayback().should.equal 'started playback'
+            dvrcon.stopPlayback().should.equal 'stopped playback'
+
+        it 'is required when an interface is not compatible with its controller', ->
+            dvrcon = new DVRController legacyDVR
+            startFn = dvrcon.startPlayback
+            stopFn = dvrcon.stopPlayback
+            expect(startFn).to.throw Error
+            expect(stopFn).to.throw Error
+
+        it 'provides a compatibility layer', ->
+            legacyAdapter = new LegacyAdapter legacyDVR
+            dvrcon = new DVRController legacyAdapter
+            dvrcon.startPlayback().should.equal 'started playback'
+            dvrcon.stopPlayback().should.equal 'stopped playback'
 
 
 ### TODO
     describe 'Composite', ->
-    describe 'Adapter', ->
+    describe 'Command', ->
     describe 'Mediator', ->
     describe 'Observer', ->
 ###
