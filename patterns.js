@@ -407,7 +407,46 @@ exports.Composite = composite;
 
 /*!
  * Bridge
+ * - Decouples an objects interface from its implementation so both can vary independently
  */
+
+var bridge = (function() {
+
+    function Body() {}
+    Body.prototype = {
+        moveForward: function(speed) {
+            return 'BODY is moving forward with a speed of ' + speed;
+        }
+    };
+
+    function Mind() {
+        this.moveForward = function moveForward() {
+            return this.body.moveForward(5);
+        };
+    }
+
+    function HumanMind(body) {
+        this.body = body;
+    }
+    HumanMind.prototype = new Mind();
+
+    function ZombieMind(body) {
+        this.body = body;
+        this.shamble = function shamble() {
+            return this.body.moveForward(2).replace('moving', 'shambling');
+        };
+    }
+    ZombieMind.prototype = new Mind();
+
+    return {
+        Body: Body,
+        HumanMind: HumanMind,
+        ZombieMind: ZombieMind
+    };
+
+} ());
+
+exports.Bridge = bridge;
 
 /*!
  * Command

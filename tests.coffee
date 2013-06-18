@@ -316,8 +316,22 @@ suite 'Patterns', ->
             spy3.should.have.been.calledTwice
             spy4.should.have.been.calledTwice
 
-### TODO
     suite 'Bridge', ->
+        bridge = patterns.Bridge
+
+        test 'A human body can be controlled by a human brain', ->
+            body = new bridge.Body()
+            mind = new bridge.HumanMind(body)
+            expect(mind.moveForward()).to.equal 'BODY is moving forward with a speed of 5'
+
+        test 'A human body can be controlled by a zombie mind', ->
+            body = new bridge.Body()
+            zombineMind = new bridge.ZombieMind(body)
+            expect(zombineMind.shamble()).to.equal 'BODY is shambling forward with a speed of 2'
+
+
+### TODO
+    suite 'FlyWeight', ->
     suite 'Command', ->
     suite 'Mediator', ->
     suite 'Observer', ->
