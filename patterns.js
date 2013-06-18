@@ -447,7 +447,7 @@ exports.Bridge = bridge;
 
 /*!
  * Command
- * -
+ * - A method that represents a list of commands, actions or keystrokes
  */
 
 var command = (function() {
@@ -462,22 +462,39 @@ var command = (function() {
         },
         drop: function lift(item) {
             return 'Grunt dropped an item: ' + item;
+        }
+    };
+
+    var commands = {};
+
+    function Executor() {}
+    Executor.prototype = {
+        handle: function handle(commandName, callback) {
+            commands[commandName] = {
+                ctx: this,
+                callback: callback
+            };
         },
-        execute: function(item, destination) {
-            this.lift(item);
-            this.walk(destination);
-            this.drop(item);
-            return 'Grunt shifted the item: ' + item;
+        execute: function execute(commandName, data) {
+            var command = commands[commandName];
+            if (command) {
+                command.callback.call(command.ctx, data);
+            }
         }
     };
 
     return {
-        Grunt: Grunt
+        Grunt: Grunt,
+        Executor: Executor
     };
 
 }());
 
 exports.Command = command;
+
+/*!
+ * Flyweight
+ */
 
 /*!
  * Mediator

@@ -332,9 +332,11 @@ suite 'Patterns', ->
     suite 'Command', ->
         command = patterns.Command
         grunt = null
+        executor = null
 
         setup ->
             grunt = new command.Grunt()
+            executor = new command.Executor()
 
 
         test 'A grunt can lift up, carry and drop items', ->
@@ -355,14 +357,20 @@ suite 'Patterns', ->
             expect(grunt.drop('box')).to.equal 'Grunt dropped an item: box'
             dropSpy.should.have.been.calledOnce
 
-        test 'A grunt can do all that at once', ->
-            grunt.should.have.property 'execute'
+        test 'An executor can be used to store the tasks and execute them later', ->
+
+            shiftBoxes = () ->
+                grunt.lift 'box'
+                grunt.walk 'stack'
+                grunt.drop 'nah'
+
+            executor.handle 'shiftEm', shiftBoxes
 
             liftSpy = sinon.spy grunt, 'lift'
             walkSpy = sinon.spy grunt, 'walk'
             dropSpy = sinon.spy grunt, 'drop'
 
-            grunt.execute('box', 'stack');
+            executor.execute 'shiftEm'
 
             liftSpy.should.have.been.calledOnce
             walkSpy.should.have.been.calledOnce
