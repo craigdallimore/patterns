@@ -394,9 +394,6 @@ var composite = (function() {
         }
     };
 
-
-
-
     return {
         Node: Node
     };
@@ -452,6 +449,35 @@ exports.Bridge = bridge;
  * Command
  * -
  */
+
+var command = (function() {
+
+    function Grunt() {}
+    Grunt.prototype = {
+        lift: function lift(item) {
+            return 'Grunt lifted an item: ' + item;
+        },
+        walk: function lift(destination) {
+            return 'Grunt walked to destination: ' + destination;
+        },
+        drop: function lift(item) {
+            return 'Grunt dropped an item: ' + item;
+        },
+        execute: function(item, destination) {
+            this.lift(item);
+            this.walk(destination);
+            this.drop(item);
+            return 'Grunt shifted the item: ' + item;
+        }
+    };
+
+    return {
+        Grunt: Grunt
+    };
+
+}());
+
+exports.Command = command;
 
 /*!
  * Mediator

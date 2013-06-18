@@ -329,10 +329,48 @@ suite 'Patterns', ->
             zombineMind = new bridge.ZombieMind(body)
             expect(zombineMind.shamble()).to.equal 'BODY is shambling forward with a speed of 2'
 
+    suite 'Command', ->
+        command = patterns.Command
+        grunt = null
+
+        setup ->
+            grunt = new command.Grunt()
+
+
+        test 'A grunt can lift up, carry and drop items', ->
+            grunt.should.have.property 'lift'
+            grunt.should.have.property 'walk'
+            grunt.should.have.property 'drop'
+
+            liftSpy = sinon.spy grunt, 'lift'
+            walkSpy = sinon.spy grunt, 'walk'
+            dropSpy = sinon.spy grunt, 'drop'
+
+            expect(grunt.lift('box')).to.equal 'Grunt lifted an item: box'
+            liftSpy.should.have.been.calledOnce
+
+            expect(grunt.walk('stack')).to.equal 'Grunt walked to destination: stack'
+            walkSpy.should.have.been.calledOnce
+
+            expect(grunt.drop('box')).to.equal 'Grunt dropped an item: box'
+            dropSpy.should.have.been.calledOnce
+
+        test 'A grunt can do all that at once', ->
+            grunt.should.have.property 'execute'
+
+            liftSpy = sinon.spy grunt, 'lift'
+            walkSpy = sinon.spy grunt, 'walk'
+            dropSpy = sinon.spy grunt, 'drop'
+
+            grunt.execute('box', 'stack');
+
+            liftSpy.should.have.been.calledOnce
+            walkSpy.should.have.been.calledOnce
+            dropSpy.should.have.been.calledOnce
+
 
 ### TODO
     suite 'FlyWeight', ->
-    suite 'Command', ->
     suite 'Mediator', ->
     suite 'Observer', ->
 ###
