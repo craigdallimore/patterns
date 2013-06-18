@@ -366,7 +366,47 @@ exports.Adapter = adapter;
 
 /*!
  * Composite
- * -
+ * - Enable a group of similar objects to be managed in the same way
+ *   as a single instance of the object.
+ */
+
+var composite = (function() {
+
+    function Node( name ) {
+        this.name = name || null;
+        this.children = [];
+    }
+    Node.prototype = {
+        addChild: function addChild(child) {
+            this.children.push(child);
+        },
+        sayName: function sayName() {
+            if (this.name) {
+                return 'Node:' + this.name;
+            } else {
+                this.traverse('sayName');
+            }
+        },
+        traverse: function traverse(fn) {
+            this.children.map(function(child) {
+                child[fn]();
+            });
+        }
+    };
+
+
+
+
+    return {
+        Node: Node
+    };
+
+}());
+
+exports.Composite = composite;
+
+/*!
+ * Bridge
  */
 
 /*!

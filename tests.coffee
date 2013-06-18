@@ -9,10 +9,10 @@ chai.use sinonChai
 
 patterns = require './patterns.js'
 
-describe 'Patterns', ->
+suite 'Patterns', ->
 
     ###
-    describe 'singleton', ->
+    suite 'singleton', ->
 
         Singleton = patterns.Singleton
         instance1 = {}
@@ -22,18 +22,18 @@ describe 'Patterns', ->
             instance1 = new Singleton()
             instance2 = new Singleton()
 
-        it 'should be the same object in different instances', ->
+        test 'should be the same object in different instances', ->
 
             bool = (instance1 == instance2)
 
             # instance1.should.equal instance2
             bool.should.be.true
 
-        it 'should not have a public "instance" property on the constructor', ->
+        test 'should not have a public "instance" property on the constructor', ->
 
             Singleton.should.not.have.property 'instance'
 
-        it 'should be able to be augmented, like a normal object', ->
+        test 'should be able to be augmented, like a normal object', ->
 
             instance1 = new Singleton()
             Singleton.prototype.bar = 'baz'
@@ -42,25 +42,25 @@ describe 'Patterns', ->
             instance1.should.have.property 'bar'
             instance2.should.have.property 'bar'
 
-        it 'should correctly identify its constructor', ->
+        test 'should correctly identify its constructor', ->
 
             instance1.should.be.an.instanceof Singleton
             instance2.should.be.an.instanceof Singleton
     ###
 
-    describe 'Factory', ->
+    suite 'Factory', ->
 
         shipyard = patterns.ShipFactory
 
-        it 'requires a type', ->
+        test 'requires a type', ->
             build = shipyard.build
             expect(build).to.throw /Type required/
 
-        it 'can create objects', ->
+        test 'can create objects', ->
             fighter = shipyard.build 'fighter'
             fighter.should.be.an 'object'
 
-        it 'will create different kinds of objects based on the type supplied', ->
+        test 'will create different kinds of objects based on the type supplied', ->
             fighter = shipyard.build 'fighter'
             drone = shipyard.build 'drone'
 
@@ -70,71 +70,71 @@ describe 'Patterns', ->
             drone.should.have.property 'speed'
             drone.getSpeed().should.equal 10
 
-    describe 'Iterator', ->
+    suite 'Iterator', ->
 
         iterator = patterns.Iterator
 
-        it 'has a "next" method', ->
+        test 'has a "next" method', ->
             iterator.should.have.property 'next'
             iterator.next.should.be.a 'function'
 
-        it '... which returns the next item', ->
+        test '... which returns the next item', ->
             nextItem = iterator.next()
             nextItem.should.be.an 'object'
             nextItem.name.should.equal 'Sean Larsson'
             nextItem = iterator.next()
             nextItem.name.should.equal 'James Harth'
 
-        it 'has a "hasNext" method', ->
+        test 'has a "hasNext" method', ->
             iterator.should.have.property 'hasNext'
             iterator.hasNext.should.be.a 'function'
 
-        it '... which returns true if there is a next item', ->
+        test '... which returns true if there is a next item', ->
             hasNext = iterator.hasNext()
             hasNext.should.equal true
-        it '... and which returns false if there is not', ->
+        test '... and which returns false if there is not', ->
             iterator.next()
             iterator.next()
             hasNext = iterator.hasNext()
             hasNext.should.equal false
 
-        it 'has a "current" method', ->
+        test 'has a "current" method', ->
             iterator.should.have.property 'current'
             iterator.current.should.be.a 'function'
 
-        it '... which returns null if there is no next item', ->
+        test '... which returns null if there is no next item', ->
             next = iterator.next()
             expect(next).to.equal null
 
-        it 'has a "rewind" method', ->
+        test 'has a "rewind" method', ->
             iterator.should.have.property 'rewind'
             iterator.rewind.should.be.a 'function'
 
-        it 'can rewind to the first item', ->
+        test 'can rewind to the first item', ->
             iterator.rewind()
             first = iterator.current()
             first.should.be.an 'object'
             first.name.should.equal 'Sean Larsson'
 
-        it 'will not advance the index using the "current" method', ->
+        test 'will not advance the index using the "current" method', ->
             first = iterator.current()
             first.should.be.an 'object'
             first.name.should.equal 'Sean Larsson'
 
-        it 'does not expose it\'s data for external manipulation', ->
+        test 'does not expose it\'s data for external manipulation', ->
             iterator.should.not.have.property 'data'
 
-    describe 'Decorator', ->
+    suite 'Decorator', ->
 
         cake = null
         decorator = patterns.Decorator
 
-        beforeEach ->
+        setup ->
             cake = decorator.makeCake()
-        afterEach ->
+        teardown ->
             cake = null
 
-        it 'can tweak an object at runtime', ->
+        test 'can tweak an object at runtime', ->
             cake.should.be.an.object
             expect(cake.getSugar()).to.equal '300g'
 
@@ -142,12 +142,12 @@ describe 'Patterns', ->
             cake.decorate 'frosting'
             expect(cake.getSugar()).to.equal '400g'
 
-        it 'throws an error if an incorrect decorator is used', ->
+        test 'throws an error if an incorrect decorator is used', ->
             badDecoration = ->
                 cake.decorate 'mustard'
             expect(badDecoration).to.throw Error
 
-        it 'permits decorations to be removed', ->
+        test 'permits decorations to be removed', ->
             cake.getSugar().should.equal '300g'
             cake.decorate 'frosting'
             cake.decorate 'sprinkles'
@@ -155,22 +155,22 @@ describe 'Patterns', ->
             cake.unDecorate 'frosting'
             cake.getSugar().should.equal '350g'
 
-        it 'only permits a decorator to be added once', ->
+        test 'only permits a decorator to be added once', ->
             cake.getSugar().should.equal '300g'
             cake.decorate 'frosting'
             cake.getSugar().should.equal '400g'
             cake.decorate 'frosting'
             cake.getSugar().should.equal '400g'
 
-    describe 'Strategy', ->
+    suite 'Strategy', ->
 
         ender = null
         battlePlan = null
         strategy = patterns.Strategy
-        beforeEach ->
+        setup ->
             ender = strategy.spawnGeneral()
 
-        it 'permits an algorithm to be chosen at runtime', ->
+        test 'permits an algorithm to be chosen at runtime', ->
             ender.should.be.an.object
             ender.should.have.property 'setStrategy'
             ender.setStrategy.should.be.a 'function'
@@ -185,17 +185,17 @@ describe 'Patterns', ->
             ender.setStrategy peacePlan
             expect(ender.wageWar()).to.equal 'amicable friendship'
 
-        it 'requires a strategy to be set', ->
+        test 'requires a strategy to be set', ->
             unplannedMove = ->
                 ender.wageWar()
             expect(unplannedMove).to.throw /No strategy set/
 
-        it 'requires a valid strategy', ->
+        test 'requires a valid strategy', ->
             unlikelyRuse = ->
                 ender.setStrategy 'surrender'
             expect(unlikelyRuse).to.throw Error
 
-    describe 'Facade', ->
+    suite 'Facade', ->
 
         facade = patterns.Facade
         wizard = null
@@ -204,11 +204,11 @@ describe 'Patterns', ->
         mage2 = null
         MageFacade = facade.MageFacade
 
-        beforeEach ->
+        setup ->
             wizard = new facade.Wizard 'Mithrandir'
             enchanter = new facade.Enchanter 'Tim'
 
-        it 'provides a common interface to multiple objects', ->
+        test 'provides a common interface to multiple objects', ->
             wizard.should.be.an 'object'
             enchanter.should.be.an 'object'
             mage1 = new MageFacade wizard
@@ -216,7 +216,7 @@ describe 'Patterns', ->
             expect(mage1.invoke('healing')).to.equal 'Mithrandir cast healing'
             expect(mage2.invoke('fireball')).to.equal 'Tim enchanted fireball'
 
-    describe 'Proxy', ->
+    suite 'Proxy', ->
 
         proxy = patterns.Proxy
 
@@ -225,20 +225,20 @@ describe 'Patterns', ->
 
         spy = sinon.spy stockKeeper, 'countStock'
 
-        it 'enables one object to trigger an operation on another subject', (done) ->
+        test 'enables one object to trigger an operation on another subject', (done) ->
 
             bookKeeper.getInventory (stock) ->
                 expect(stock).to.equal '300 units'
                 done()
 
-        it 'masks or caches results from expensive operations', (done) ->
+        test 'masks or caches results from expensive operations', (done) ->
 
             bookKeeper.getInventory (stock) ->
                 expect(stock).to.equal '300 units'
                 spy.should.have.been.calledOnce
                 done()
 
-    describe 'Adapter', ->
+    suite 'Adapter', ->
 
         adapter = patterns.Adapter
         legacyDVR = new adapter.LegacyDVR()
@@ -249,28 +249,76 @@ describe 'Patterns', ->
         legacyAdapter = null
 
 
-        it 'is not required with compatible interfaces', ->
+        test 'is not required with compatible interfaces', ->
             dvrcon = new DVRController modernDVR
             dvrcon.startPlayback().should.equal 'started playback'
             dvrcon.stopPlayback().should.equal 'stopped playback'
 
-        it 'is required when an interface is not compatible with its controller', ->
+        test 'is required when an interface is not compatible with its controller', ->
             dvrcon = new DVRController legacyDVR
             startFn = dvrcon.startPlayback
             stopFn = dvrcon.stopPlayback
             expect(startFn).to.throw Error
             expect(stopFn).to.throw Error
 
-        it 'provides a compatibility layer', ->
+        test 'provides a compatibility layer', ->
             legacyAdapter = new LegacyAdapter legacyDVR
             dvrcon = new DVRController legacyAdapter
             dvrcon.startPlayback().should.equal 'started playback'
             dvrcon.stopPlayback().should.equal 'stopped playback'
 
+    suite 'Composite', ->
+
+        composite = patterns.Composite
+
+        test 'should produce \'Node\' objects', ->
+            node = new composite.Node 'TestNode'
+            node.should.be.an 'object'
+            node.should.have.property 'addChild'
+
+        test 'Nodes can have names', ->
+            node = new composite.Node 'TestNode'
+            node.should.have.property 'sayName'
+            expect(node.sayName()).to.equal 'Node:TestNode'
+
+        test 'Nodes without names will instead call their children\'s names', ->
+            parent =    new composite.Node
+            child =     new composite.Node 'child'
+            spy =       sinon.spy child, 'sayName'
+
+            parent.addChild child
+            parent.sayName()
+
+            spy.should.have.been.calledOnce
+
+        test 'Calling \'sayName\' on a node will recursively call it on all children', ->
+            grandParent =   new composite.Node
+            uncle =         new composite.Node
+            aunt =          new composite.Node
+            cousin1 =       new composite.Node 'C1'
+            cousin2 =       new composite.Node 'C2'
+            cousin3 =       new composite.Node 'C3'
+            cousin4 =       new composite.Node 'C4'
+            spy1 =          sinon.spy cousin1, 'sayName'
+            spy2 =          sinon.spy cousin2, 'sayName'
+            spy3 =          sinon.spy cousin3, 'sayName'
+            spy4 =          sinon.spy cousin4, 'sayName'
+            uncle.addChild cousin1
+            uncle.addChild cousin2
+            aunt.addChild cousin3
+            aunt.addChild cousin4
+            grandParent.addChild uncle
+            grandParent.addChild aunt
+            grandParent.sayName()
+            aunt.sayName()
+            spy1.should.have.been.calledOnce
+            spy2.should.have.been.calledOnce
+            spy3.should.have.been.calledTwice
+            spy4.should.have.been.calledTwice
 
 ### TODO
-    describe 'Composite', ->
-    describe 'Command', ->
-    describe 'Mediator', ->
-    describe 'Observer', ->
+    suite 'Bridge', ->
+    suite 'Command', ->
+    suite 'Mediator', ->
+    suite 'Observer', ->
 ###
